@@ -10,22 +10,22 @@ class PointService:
         self.password = password
         self.database = database
 
+    def _connect(self):
+        return mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            port=self.port,
+            password=self.password,
+            database=self.database
+        )
+
     def save_point(self, data):
         try:
-            # Establish connection to MySQL database
-            connection = mysql.connector.connect(
-                host=self.host,
-                user=self.user,
-                port=self.port,
-                password=self.password,
-                database=self.database
-            )
+            connection = self._connect()
 
             if connection.is_connected():
-                # Create a cursor object
                 cursor = connection.cursor()
 
-                # Check if the point already exists
                 sql_query_check = """
                 SELECT * FROM point WHERE Name = %(Name)s 
                 """
@@ -35,14 +35,11 @@ class PointService:
                 if existing_point:
                     return "Point already exists"
                 else:
-                    # Define the SQL query
                     sql_query_insert = """
-                    INSERT INTO point (Name, latdegree, latminute, latsecond, longdegree, longminute, longsecond, geodeticheight, h, bs, hdbs, tbs, fs, hdfs, tfs)
-                    VALUES (%(Name)s, %(latdegree)s, %(latminute)s, %(latsecond)s, %(longdegree)s, %(longminute)s, %(longsecond)s, %(geodeticheight)s, %(h)s, %(bs)s, %(hdbs)s, %(tbs)s, %(fs)s, %(hdfs)s, %(tfs)s)
+                    INSERT INTO point (Name, latdegree, latminute, latsecond, longdegree, longminute, longsecond, geodeticheight, h)
+                    VALUES (%(Name)s, %(latdegree)s, %(latminute)s, %(latsecond)s, %(longdegree)s, %(longminute)s, %(longsecond)s, %(geodeticheight)s, %(h)s)
                     """
-                    # Execute the query with the provided data
                     cursor.execute(sql_query_insert, data)
-                    # Commit the transaction
                     connection.commit()
                     return "Data inserted successfully!"
 
@@ -51,43 +48,30 @@ class PointService:
             return "Error while connecting to MySQL: {}".format(e)
 
         finally:
-            # Close the connection
             if connection.is_connected():
                 cursor.close()
                 connection.close()
                 print("MySQL connection is closed")
 
-    def get_point_details(self, name):
+    def get_all_points(self):
         try:
-            # Establish connection to MySQL database
-            connection = mysql.connector.connect(
-                host=self.host,
-                user=self.user,
-                port=self.port,
-                password=self.password,
-                database=self.database
-            )
+            connection = self._connect()
 
             if connection.is_connected():
-                # Create a cursor object
                 cursor = connection.cursor()
 
-                # Define the SQL query
-                sql_query_select = """
-                SELECT Name, bs, hdbs, tbs, fs, hdfs, tfs FROM point WHERE Name = %(Name)s 
+                sql_query_get_all_points = """
+                SELECT * FROM point
                 """
-                # Execute the query with the provided data
-                cursor.execute(sql_query_select, {'Name': name})
-                # Fetch the result
-                point_details = cursor.fetchone()
-                return point_details
+                cursor.execute(sql_query_get_all_points)
+                all_points = cursor.fetchall()
+                return all_points
 
         except Error as e:
             print("Error while connecting to MySQL", e)
-            return None
+            return "Error while connecting to MySQL: {}".format(e)
 
         finally:
-            # Close the connection
             if connection.is_connected():
                 cursor.close()
                 connection.close()

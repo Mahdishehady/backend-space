@@ -1,15 +1,25 @@
 from fastapi import FastAPI, Query, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from constants import Constants
+from elevation import enter_data
+from helpers.constants import Constants
+
 from model.database import Database
-from pointClass.PointClass import Point
+from patent import read_patent
 from services.pointService import PointService
 from services.pairPointService import pairPointService
 
-from typing import Dict, List
+from typing import Dict
 from pydantic import BaseModel
 
+from Аномалиявысоты import calc_add_more
+class LevellingData(BaseModel):
+    H_levelling_m: float
+
+class CalcDataTableParams(BaseModel):
+    levelling: Dict[str, LevellingData]
+    startPoint: str
+    endPoint: str
 
 class DataPoint(BaseModel):
     bs: str
@@ -53,7 +63,7 @@ async def shutdown_event():
 
 @app.get("/")
 def hello():
-    return {"Welcomee"}
+    return {"Welcome To Аномалия высоты API's"}
 
 
 @app.get("/api/save-point")
@@ -66,13 +76,7 @@ async def save_point(
         longminute: float = Query(...),
         longsecond: float = Query(...),
         geodeticheight: float = Query(...),
-        h: float = Query(...),
-        bs: float = Query(...),
-        hdbs: float = Query(...),
-        tbs: float = Query(...),
-        fs: float = Query(...),
-        hdfs: float = Query(...),
-        tfs: float = Query(...),
+        h: float = Query(...)
 ):
     point = {
         "Name": Name.upper(),
@@ -83,13 +87,7 @@ async def save_point(
         "longminute": longminute,
         "longsecond": longsecond,
         "geodeticheight": geodeticheight,
-        "h": h,
-        "bs": bs,
-        "hdbs": hdbs,
-        "tbs": tbs,
-        "fs": fs,
-        "hdfs": hdfs,
-        "tfs": tfs
+        "h": h
     }
     result = point_service.save_point(point)
     if "already exists" in result:
@@ -108,13 +106,28 @@ def save_pair_point(items: DataRequest):
             return {"error": f"Error while saving pair point {first_pair_name}: {result}"}
             # Iterate over remaining keys and save them with the first pairName
         for pair_name1, point_data in items.points.items():
-            pair_name=pair_name1.upper()
+            pair_name = pair_name1.upper()
             if pair_name != first_pair_name:
                 result_pair_values = pairPointService.save_pair_values(first_pair_name, pair_name, point_data)
-                # if result_pair_values != "Points inserted successfully!":
-                #     return {"error": f"Error while saving points for pair point values {pair_name}: {result_pair_values}"}
-
     else:
         raise HTTPException(status_code=404, detail="No points found")
 
     return {"message": "Pair points and their values saved successfully!"}
+
+
+class PairPointsResponse(BaseModel):
+    points: dict
+
+
+# API endpoint to get data about a pair name
+@app.post("/api/get-data-table")
+def get_pair_points(DataTableParams :CalcDataTableParams):
+    # datatable = calc_add_more(DataTableParams.levelling, DataTableParams.startPoint, DataTableParams.endPoint)
+    datatable=enter_data(DataTableParams.startPoint + '_' + DataTableParams.endPoint)
+    return {"data": datatable}
+
+
+@app.get("/api/get-all-points")
+def get_all_points():
+    all_points = read_patent()
+    return all_points

@@ -1,0 +1,13 @@
+CURVATURE = 0.0673
+COLLIMATION = 0.0000163934426229472
+STANDARD_TEMP = 20
+THERMAL_EXPANSION_COEFFICIENT = 0.0000238
+Z7MR5 = 242.08
+
+class Constants:
+    HOST = "localhost"
+    USER = "root"
+    PASSWORD = "root"
+    DATABASE = "spacedb"
+    TABLE = "point"
+    PORT=3308

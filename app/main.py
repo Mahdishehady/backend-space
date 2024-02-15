@@ -1,25 +1,21 @@
 from fastapi import FastAPI, Query, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from elevation import enter_data
-from helpers.constants import Constants
+from app.model.database import Database
+from app.services.pairPointService import pairPointService
+from app.Аномалиявысоты import calc_add_more
+from app.patent import *
 
-from model.database import Database
-from patent import read_patent
-from services.pointService import PointService
-from services.pairPointService import pairPointService
 
-from typing import Dict
-from pydantic import BaseModel
-
-from Аномалиявысоты import calc_add_more
 class LevellingData(BaseModel):
     H_levelling_m: float
+
 
 class CalcDataTableParams(BaseModel):
     levelling: Dict[str, LevellingData]
     startPoint: str
     endPoint: str
+
 
 class DataPoint(BaseModel):
     bs: str
@@ -121,13 +117,23 @@ class PairPointsResponse(BaseModel):
 
 # API endpoint to get data about a pair name
 @app.post("/api/get-data-table")
-def get_pair_points(DataTableParams :CalcDataTableParams):
-    # datatable = calc_add_more(DataTableParams.levelling, DataTableParams.startPoint, DataTableParams.endPoint)
-    datatable=enter_data(DataTableParams.startPoint + '_' + DataTableParams.endPoint)
+def get_pair_points(DataTableParams: CalcDataTableParams):
+    datatable = calc_add_more(DataTableParams.levelling, DataTableParams.startPoint, DataTableParams.endPoint)
+    print("final table")
+    print( datatable)
     return {"data": datatable}
 
 
-@app.get("/api/get-all-points")
-def get_all_points():
-    all_points = read_patent()
-    return all_points
+@app.post("/api/getNLevelling")
+def get_NLevelling(levelling: Dict[str, LevellingData]):
+    getNLevelling= get_Geoid_Undulation_NLevelling(levelling)
+    return getNLevelling
+@app.post("/api/getNEGM2008")
+def get_NEGM2008(levelling: Dict[str, LevellingData]):
+    getNEGM2008= get_Geoid_Undulation_NEGM2008(levelling)
+    return getNEGM2008
+
+@app.post("/api/getmeandeviation")
+def getMeanDeviation(levelling: Dict[str, LevellingData]):
+    getmeandeviationdata= get_mean_deviation(levelling)
+    return getmeandeviationdata

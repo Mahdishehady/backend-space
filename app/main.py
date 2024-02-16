@@ -5,7 +5,7 @@ from app.model.database import Database
 from app.services.pairPointService import pairPointService
 from app.calculationService import calc_add_more
 from app.patent import *
-from mangum import Mangum
+
 
 class LevellingData(BaseModel):
     H_levelling_m: float
@@ -31,7 +31,6 @@ class DataRequest(BaseModel):
 
 
 app = FastAPI()
-handler=Mangum(app)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Update this with your frontend domain

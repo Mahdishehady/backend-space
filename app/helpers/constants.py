@@ -8,6 +8,6 @@ class Constants:
     HOST = "spacedb.cl1kjmd48yh7.us-east-2.rds.amazonaws.com"
     USER = "space"
     PASSWORD = "81304012space"
-    DATABASE = "spaceDB"
+    DATABASE = "spacedb"
     TABLE = "point"
     PORT=3306

@@ -3,7 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from model.database import Database
 from services.pairPointService import pairPointService
-from Аномалиявысоты import calc_add_more
+from calculationService import calc_add_more
 from patent import *
 from mangum import Mangum
 

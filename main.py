@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Query, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from app.model.database import Database
-from app.services.pairPointService import pairPointService
-from app.Аномалиявысоты import calc_add_more
-from app.patent import *
+from model.database import Database
+from services.pairPointService import pairPointService
+from Аномалиявысоты import calc_add_more
+from patent import *
 
 
 class LevellingData(BaseModel):

@@ -1,4 +1,4 @@
-from app.helpers.constants import *
+from helpers.constants import *
 
 
 def get_curvature(sight, horizontal_distance):

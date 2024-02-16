@@ -2,10 +2,10 @@ from typing import Dict
 import statistics
 from pydantic import BaseModel
 
-from app.helpers.constants import Constants
-from app.helpers.formulas import calculate_decimal_degree
-from app.helpers.helpers import convertpatent_dic
-from app.services.pointService import PointService
+from helpers.constants import Constants
+from helpers.formulas import calculate_decimal_degree
+from helpers.helpers import convertpatent_dic
+from services.pointService import PointService
 
 point_service = PointService(host=Constants.HOST, user=Constants.USER, port=Constants.PORT, password=Constants.PASSWORD,
                              database=Constants.DATABASE)

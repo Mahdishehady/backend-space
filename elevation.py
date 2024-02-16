@@ -1,8 +1,7 @@
-from app.helpers.constants import Constants
-from app.services.pointService import PointService
-from app.services.pairPointService import pairPointService
-from app.helpers.formulas import *
-from app.helpers.helpers import *
+from services.pointService import PointService
+from services.pairPointService import pairPointService
+from helpers.formulas import *
+from helpers.helpers import *
 
 pairPointService = pairPointService(host=Constants.HOST, user=Constants.USER, port=Constants.PORT,
                                     password=Constants.PASSWORD,

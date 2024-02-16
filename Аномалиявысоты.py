@@ -1,6 +1,6 @@
-from app.elevation import enter_data, elevation
-from app.helpers.constants import Z7MR5
-from app.patent import get_decimal_degrees
+from elevation import enter_data, elevation
+from helpers.constants import Z7MR5
+from patent import get_decimal_degrees
 from typing import Dict
 from pydantic import BaseModel
 
